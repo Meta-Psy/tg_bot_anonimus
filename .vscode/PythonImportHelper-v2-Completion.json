@@ -1,0 +1,171 @@
+[
+    {
+        "label": "telebot",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "telebot",
+        "description": "telebot",
+        "detail": "telebot",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "buttons",
+        "description": "buttons",
+        "isExtraImport": true,
+        "detail": "buttons",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "welcome",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}')\n        bot.register_next_step_handler(message, main_menu)\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")\n        bot.register_next_step_handler(message, save_name)\ndef save_name(message):",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "save_name",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def save_name(message):\n    chat_id = message.from_user.id\n    name = message.text\n    create_acc(message.from_user.id, name)\n    bot.send_message(chat_id, 'Выберите Действие: ', reply_markup=main_menu_bt())\n@bot.message_handler(content_types=['text'])\ndef main_menu(message):\n    chat_id = message.from_user.id\n    if message.text.lower() == 'создать свой опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "main_menu",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def main_menu(message):\n    chat_id = message.from_user.id\n    if message.text.lower() == 'создать свой опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message=message, callback=answers)\n    elif message.text.lower() == 'выбрать опросник друга':\n        pass\ndef answers(message):\n    chat_id = message.from_user.id\n    question = message.text",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "answers",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def answers(message):\n    chat_id = message.from_user.id\n    question = message.text\n    bot.send_message(chat_id,\"Ваш варианты ответа (напишите все через точку с запятой одним сообщением). Правильным будет первый вариант\")\n    bot.register_next_step_handler(message, get_answer, question)\ndef get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_info(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "get_answer",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_info(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)\n    bot.send_message(chat_id, 'Продолжим?', reply_markup=choose_bt())\n    bot.register_next_step_handler(message, choose)\ndef choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "choose",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':\n        bot.send_message(chat_id, \"Ваш опросник успешно сохранен. Если будет желание, можете снова создать опросник или пройти его самому. Кнопки будут как всегда внизу.\", reply_markup=main_menu_bt())\n    elif message.text == 'Еще один опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message, answers)\nbot.infinity_polling()",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "bot",
+        "kind": 5,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "bot = telebot.TeleBot(token=\"8284829962:AAEGchYMnm23mP9Tpxgyo1rFVOyclJTOi5o\")\n@bot.message_handler(commands=['start'])\ndef welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}')\n        bot.register_next_step_handler(message, main_menu)\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "main_menu_bt",
+        "kind": 2,
+        "importPath": "buttons",
+        "description": "buttons",
+        "peekOfCode": "def main_menu_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Создать свой Опросник\")\n    bt2 = telebot.types.KeyboardButton(\"Выбрать Опросник друга\")\n    kb.row(bt1)\n    kb.row(bt2)\n    return kb\ndef choose_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Завершить работу\")",
+        "detail": "buttons",
+        "documentation": {}
+    },
+    {
+        "label": "choose_bt",
+        "kind": 2,
+        "importPath": "buttons",
+        "description": "buttons",
+        "peekOfCode": "def choose_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Завершить работу\")\n    bt2 = telebot.types.KeyboardButton(\"Еще один опросник\")\n    kb.add(bt1, bt2)\n    return kb",
+        "detail": "buttons",
+        "documentation": {}
+    },
+    {
+        "label": "create_acc",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def create_acc(tg_id, name):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO users (tg_id, name) VALUES (?, ?)', (tg_id, name))\n    conn.commit()\n    conn.close()\ndef check_reg(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    tg_id = int(tg_id)",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "check_reg",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def check_reg(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    tg_id = int(tg_id)\n    cur.execute('SELECT * FROM users WHERE tg_id=?', (tg_id,))\n    info = cur.fetchall()\n    conn.close()\n    return info\ndef get_user_info(tg_id):\n    conn = sqlite3.connect('anonimus.db')",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_info",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_user_info(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT user_id FROM users WHERE tg_id=?', (tg_id,))\n    row = cur.fetchone()\n    conn.close()\n    return row[0] if row else None\ndef create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "create_poll",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO polls (question, answer, user_id) VALUES (?, ?, ?)', (question, answer, user_id))\n    conn.commit()\n    conn.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "conn",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "conn = sqlite3.connect('anonimus.db')\ncur = conn.cursor()\ncur.execute('''\n        CREATE TABLE IF NOT EXISTS users (\n        user_id INTEGER PRIMARY KEY AUTOINCREMENT,\n        tg_id INTEGER,\n        name TEXT)\n            ''')\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS polls (",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "cur",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "cur = conn.cursor()\ncur.execute('''\n        CREATE TABLE IF NOT EXISTS users (\n        user_id INTEGER PRIMARY KEY AUTOINCREMENT,\n        tg_id INTEGER,\n        name TEXT)\n            ''')\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS polls (\n    poll_id INTEGER PRIMARY KEY AUTOINCREMENT,",
+        "detail": "database",
+        "documentation": {}
+    }
+]

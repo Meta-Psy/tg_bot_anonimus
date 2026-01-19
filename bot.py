@@ -27,7 +27,16 @@ def main_menu(message):
         bot.send_message(chat_id, 'Задайте Вопрос: ')
         bot.register_next_step_handler(message=message, callback=answers)
     elif message.text.lower() == 'выбрать опросник друга':
-        pass
+        user_id = get_user_id(message.from_user.id)
+        friends = get_friends(user_id)
+        friends_with_names = get_names_for_ids(friends)
+        bot.send_message(chat_id, "Выбери своего друга, которому ты бы хотел отправить опросник", reply_markup=friends_bt(friends_with_names))
+    elif message.text.lower() == 'добавить друга':
+        bot.send_message(chat_id, "Отправь ID своего друга. Он может узнать это через кнопку 'Узнать свой ID")
+        bot.register_next_step_handler(message=message, callback=add_friend)
+    elif message.text.lower() == 'узнать свой id':
+        bot.send_message(chat_id, message.from_user.id)
+    
 
 def answers(message):
     chat_id = message.from_user.id
@@ -38,7 +47,7 @@ def answers(message):
 def get_answer(message, question):
     chat_id = message.from_user.id
     answer = message.text
-    user_id = get_user_info(tg_id=message.from_user.id)
+    user_id = get_user_id(tg_id=message.from_user.id)
     create_poll(question, answer, user_id)
     bot.send_message(chat_id, 'Продолжим?', reply_markup=choose_bt())
     bot.register_next_step_handler(message, choose)
@@ -51,4 +60,17 @@ def choose(message):
     elif message.text == 'Еще один опросник':
         bot.send_message(chat_id, 'Задайте Вопрос: ')
         bot.register_next_step_handler(message, answers)
+        
+def add_friend(message):
+    chat_id = message.from_user.id
+    friend_tg_id = int(message.text)
+    user1_id = get_user_id(message.from_user.id)
+    user2_id = get_user_id(friend_tg_id)
+    if user2_id is None:
+        bot.send_message(chat_id, "Пользователь с таким ID не найден")
+        return
+    matching_db(user1_id=user1_id, user2_id=user2_id)
+    bot.send_message(chat_id, "Успешно добавлено")
+
+
 bot.infinity_polling()

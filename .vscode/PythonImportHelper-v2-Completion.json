@@ -56,7 +56,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def main_menu(message):\n    chat_id = message.from_user.id\n    if message.text.lower() == 'создать свой опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message=message, callback=answers)\n    elif message.text.lower() == 'выбрать опросник друга':\n        pass\ndef answers(message):\n    chat_id = message.from_user.id\n    question = message.text",
+        "peekOfCode": "def main_menu(message):\n    chat_id = message.from_user.id\n    if message.text.lower() == 'создать свой опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message=message, callback=answers)\n    elif message.text.lower() == 'выбрать опросник друга':\n        user_id = get_user_id(message.from_user.id)\n        friends = get_friends(user_id)\n        friends_with_names = get_names_for_ids(friends)\n        bot.send_message(chat_id, \"Выбери своего друга, которому ты бы хотел отправить опросник\", reply_markup=friends_bt(friends_with_names))",
         "detail": "bot",
         "documentation": {}
     },
@@ -65,7 +65,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def answers(message):\n    chat_id = message.from_user.id\n    question = message.text\n    bot.send_message(chat_id,\"Ваш варианты ответа (напишите все через точку с запятой одним сообщением). Правильным будет первый вариант\")\n    bot.register_next_step_handler(message, get_answer, question)\ndef get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_info(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)",
+        "peekOfCode": "def answers(message):\n    chat_id = message.from_user.id\n    question = message.text\n    bot.send_message(chat_id,\"Ваш варианты ответа (напишите все через точку с запятой одним сообщением). Правильным будет первый вариант\")\n    bot.register_next_step_handler(message, get_answer, question)\ndef get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_id(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)",
         "detail": "bot",
         "documentation": {}
     },
@@ -74,7 +74,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_info(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)\n    bot.send_message(chat_id, 'Продолжим?', reply_markup=choose_bt())\n    bot.register_next_step_handler(message, choose)\ndef choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':",
+        "peekOfCode": "def get_answer(message, question):\n    chat_id = message.from_user.id\n    answer = message.text\n    user_id = get_user_id(tg_id=message.from_user.id)\n    create_poll(question, answer, user_id)\n    bot.send_message(chat_id, 'Продолжим?', reply_markup=choose_bt())\n    bot.register_next_step_handler(message, choose)\ndef choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':",
         "detail": "bot",
         "documentation": {}
     },
@@ -83,7 +83,16 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':\n        bot.send_message(chat_id, \"Ваш опросник успешно сохранен. Если будет желание, можете снова создать опросник или пройти его самому. Кнопки будут как всегда внизу.\", reply_markup=main_menu_bt())\n    elif message.text == 'Еще один опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message, answers)\nbot.infinity_polling()",
+        "peekOfCode": "def choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':\n        bot.send_message(chat_id, \"Ваш опросник успешно сохранен. Если будет желание, можете снова создать опросник или пройти его самому. Кнопки будут как всегда внизу.\", reply_markup=main_menu_bt())\n    elif message.text == 'Еще один опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message, answers)\ndef add_friend(message):\n    chat_id = message.from_user.id\n    friend_tg_id = int(message.text)",
+        "detail": "bot",
+        "documentation": {}
+    },
+    {
+        "label": "add_friend",
+        "kind": 2,
+        "importPath": "bot",
+        "description": "bot",
+        "peekOfCode": "def add_friend(message):\n    chat_id = message.from_user.id\n    friend_tg_id = int(message.text)\n    user1_id = get_user_id(message.from_user.id)\n    user2_id = get_user_id(friend_tg_id)\n    if user2_id is None:\n        bot.send_message(chat_id, \"Пользователь с таким ID не найден\")\n        return\n    matching_db(user1_id=user1_id, user2_id=user2_id)\n    bot.send_message(chat_id, \"Успешно добавлено\")",
         "detail": "bot",
         "documentation": {}
     },
@@ -101,7 +110,7 @@
         "kind": 2,
         "importPath": "buttons",
         "description": "buttons",
-        "peekOfCode": "def main_menu_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Создать свой Опросник\")\n    bt2 = telebot.types.KeyboardButton(\"Выбрать Опросник друга\")\n    kb.row(bt1)\n    kb.row(bt2)\n    return kb\ndef choose_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Завершить работу\")",
+        "peekOfCode": "def main_menu_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Создать свой Опросник\")\n    bt2 = telebot.types.KeyboardButton(\"Выбрать Опросник друга\")\n    bt3 = telebot.types.KeyboardButton(\"Добавить друга\")\n    bt4 = telebot.types.KeyboardButton(\"Узнать свой ID\")\n    kb.row(bt1)\n    kb.row(bt2, bt3)\n    kb.row(bt4)\n    return kb",
         "detail": "buttons",
         "documentation": {}
     },
@@ -110,7 +119,16 @@
         "kind": 2,
         "importPath": "buttons",
         "description": "buttons",
-        "peekOfCode": "def choose_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Завершить работу\")\n    bt2 = telebot.types.KeyboardButton(\"Еще один опросник\")\n    kb.add(bt1, bt2)\n    return kb",
+        "peekOfCode": "def choose_bt():\n    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)\n    bt1 = telebot.types.KeyboardButton(\"Завершить работу\")\n    bt2 = telebot.types.KeyboardButton(\"Еще один опросник\")\n    kb.add(bt1, bt2)\n    return kb\ndef friends_bt(friends_with_names):\n    kb = telebot.types.InlineKeyboardMarkup(row_width=2)\n    buttons = [telebot.types.InlineKeyboardButton(text=f'{friend[1]} - {friend[0]}', callback_data=f'id_{friend[0]}') for friend in friends_with_names]\n    kb.add(*buttons)",
+        "detail": "buttons",
+        "documentation": {}
+    },
+    {
+        "label": "friends_bt",
+        "kind": 2,
+        "importPath": "buttons",
+        "description": "buttons",
+        "peekOfCode": "def friends_bt(friends_with_names):\n    kb = telebot.types.InlineKeyboardMarkup(row_width=2)\n    buttons = [telebot.types.InlineKeyboardButton(text=f'{friend[1]} - {friend[0]}', callback_data=f'id_{friend[0]}') for friend in friends_with_names]\n    kb.add(*buttons)\n    return kb",
         "detail": "buttons",
         "documentation": {}
     },
@@ -128,16 +146,25 @@
         "kind": 2,
         "importPath": "database",
         "description": "database",
-        "peekOfCode": "def check_reg(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    tg_id = int(tg_id)\n    cur.execute('SELECT * FROM users WHERE tg_id=?', (tg_id,))\n    info = cur.fetchall()\n    conn.close()\n    return info\ndef get_user_info(tg_id):\n    conn = sqlite3.connect('anonimus.db')",
+        "peekOfCode": "def check_reg(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    tg_id = int(tg_id)\n    cur.execute('SELECT * FROM users WHERE tg_id=?', (tg_id,))\n    info = cur.fetchall()\n    conn.close()\n    return info\ndef get_user_id(tg_id):\n    conn = sqlite3.connect('anonimus.db')",
         "detail": "database",
         "documentation": {}
     },
     {
-        "label": "get_user_info",
+        "label": "get_user_id",
         "kind": 2,
         "importPath": "database",
         "description": "database",
-        "peekOfCode": "def get_user_info(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT user_id FROM users WHERE tg_id=?', (tg_id,))\n    row = cur.fetchone()\n    conn.close()\n    return row[0] if row else None\ndef create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()",
+        "peekOfCode": "def get_user_id(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT user_id FROM users WHERE tg_id=?', (tg_id,))\n    row = cur.fetchone()\n    conn.close()\n    return row[0] if row else None\ndef get_user_name(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_name",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_user_name(tg_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT name FROM users WHERE tg_id=?', (tg_id,))\n    row = cur.fetchone()\n    conn.close()\n    return row[0] if row else None\ndef create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()",
         "detail": "database",
         "documentation": {}
     },
@@ -146,7 +173,43 @@
         "kind": 2,
         "importPath": "database",
         "description": "database",
-        "peekOfCode": "def create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO polls (question, answer, user_id) VALUES (?, ?, ?)', (question, answer, user_id))\n    conn.commit()\n    conn.close()",
+        "peekOfCode": "def create_poll(question, answer, user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO polls (question, answer, user_id) VALUES (?, ?, ?)', (question, answer, user_id))\n    conn.commit()\n    conn.close()\ndef matching_db(user1_id, user2_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO matching (user1_id, user2_id) VALUES (?, ?)', (user1_id, user2_id))",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "matching_db",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def matching_db(user1_id, user2_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('INSERT INTO matching (user1_id, user2_id) VALUES (?, ?)', (user1_id, user2_id))\n    conn.commit()\n    conn.close()\ndef get_friends(user1_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT user2_id FROM matching WHERE user1_id=?', (user1_id,))",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_friends",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_friends(user1_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT user2_id FROM matching WHERE user1_id=?', (user1_id,))\n    friends = cur.fetchall()\n    conn.close()\n    return [f[0] for f in friends]  # Возвращаем список user_id, а не кортежей\ndef get_name_by_user_id(user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_name_by_user_id",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_name_by_user_id(user_id):\n    conn = sqlite3.connect('anonimus.db')\n    cur = conn.cursor()\n    cur.execute('SELECT name FROM users WHERE user_id=?', (user_id,))\n    row = cur.fetchone()\n    conn.close()\n    return row[0] if row else None\ndef get_names_for_ids(friends):\n    friends_with_names = [[friend_id, get_name_by_user_id(friend_id)] for friend_id in friends]\n    return friends_with_names",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_names_for_ids",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_names_for_ids(friends):\n    friends_with_names = [[friend_id, get_name_by_user_id(friend_id)] for friend_id in friends]\n    return friends_with_names",
         "detail": "database",
         "documentation": {}
     },
@@ -166,6 +229,60 @@
         "description": "database",
         "peekOfCode": "cur = conn.cursor()\ncur.execute('''\n        CREATE TABLE IF NOT EXISTS users (\n        user_id INTEGER PRIMARY KEY AUTOINCREMENT,\n        tg_id INTEGER,\n        name TEXT)\n            ''')\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS polls (\n    poll_id INTEGER PRIMARY KEY AUTOINCREMENT,",
         "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "conn",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "conn = sqlite3.connect('anonimus.db')\ncur = conn.cursor()\n# Создаём таблицы если не существуют\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS users (\n    user_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    tg_id INTEGER,\n    name TEXT)\n''')\ncur.execute('''",
+        "detail": "fill_test_data",
+        "documentation": {}
+    },
+    {
+        "label": "cur",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "cur = conn.cursor()\n# Создаём таблицы если не существуют\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS users (\n    user_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    tg_id INTEGER,\n    name TEXT)\n''')\ncur.execute('''\n    CREATE TABLE IF NOT EXISTS polls (",
+        "detail": "fill_test_data",
+        "documentation": {}
+    },
+    {
+        "label": "users",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "users = [\n    (111111111, 'Алексей'),\n    (222222222, 'Мария'),\n    (333333333, 'Дмитрий'),\n    (444444444, 'Анна'),\n    (555555555, 'Иван')\n]\ncur.executemany('INSERT INTO users (tg_id, name) VALUES (?, ?)', users)\n# Получим user_id\ncur.execute('SELECT user_id, tg_id, name FROM users')",
+        "detail": "fill_test_data",
+        "documentation": {}
+    },
+    {
+        "label": "all_users",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "all_users = cur.fetchall()\nprint('Пользователи:')\nfor u in all_users:\n    print(f'  user_id={u[0]}, tg_id={u[1]}, name={u[2]}')\n# Тестовые опросы\npolls = [\n    ('Какой твой любимый цвет?', 'Синий', 1),\n    ('Любимое время года?', 'Лето', 1),\n    ('Какую музыку слушаешь?', 'Рок', 2),\n    ('Любимая еда?', 'Пицца', 3),",
+        "detail": "fill_test_data",
+        "documentation": {}
+    },
+    {
+        "label": "polls",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "polls = [\n    ('Какой твой любимый цвет?', 'Синий', 1),\n    ('Любимое время года?', 'Лето', 1),\n    ('Какую музыку слушаешь?', 'Рок', 2),\n    ('Любимая еда?', 'Пицца', 3),\n    ('Хобби?', 'Программирование', 4)\n]\ncur.executemany('INSERT INTO polls (question, answer, user_id) VALUES (?, ?, ?)', polls)\n# Связи друзей\nmatching = [",
+        "detail": "fill_test_data",
+        "documentation": {}
+    },
+    {
+        "label": "matching",
+        "kind": 5,
+        "importPath": "fill_test_data",
+        "description": "fill_test_data",
+        "peekOfCode": "matching = [\n    (1, 2),  # Алексей -> Мария\n    (1, 3),  # Алексей -> Дмитрий\n    (2, 1),  # Мария -> Алексей\n    (2, 4),  # Мария -> Анна\n    (3, 5),  # Дмитрий -> Иван\n]\ncur.executemany('INSERT INTO matching (user1_id, user2_id) VALUES (?, ?)', matching)\nconn.commit()\nprint('\\nОпросы:')",
+        "detail": "fill_test_data",
         "documentation": {}
     }
 ]

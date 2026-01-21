@@ -8,8 +8,7 @@ def welcome(message):
     chat_id = message.from_user.id
     if check_reg(message.from_user.id):
         name = check_reg(message.from_user.id)
-        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}')
-        bot.register_next_step_handler(message, main_menu)
+        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}', reply_markup=main_menu_bt())
     else:
         bot.send_message(chat_id=message.from_user.id, text="Перед тем как начать,давайте познакомимся.Как вас зовут? ")
         bot.register_next_step_handler(message, save_name)
@@ -35,7 +34,7 @@ def main_menu(message):
         bot.send_message(chat_id, "Отправь ID своего друга. Он может узнать это через кнопку 'Узнать свой ID")
         bot.register_next_step_handler(message=message, callback=add_friend)
     elif message.text.lower() == 'узнать свой id':
-        bot.send_message(chat_id, message.from_user.id)
+        bot.send_message(chat_id, f"Ваш ID: {message.from_user.id}", reply_markup=main_menu_bt())
     
 
 def answers(message):
@@ -63,14 +62,18 @@ def choose(message):
         
 def add_friend(message):
     chat_id = message.from_user.id
-    friend_tg_id = int(message.text)
+    try:
+        friend_tg_id = int(message.text)
+    except ValueError:
+        bot.send_message(chat_id, "Некорректный ID. Введите число.", reply_markup=main_menu_bt())
+        return
     user1_id = get_user_id(message.from_user.id)
     user2_id = get_user_id(friend_tg_id)
     if user2_id is None:
-        bot.send_message(chat_id, "Пользователь с таким ID не найден")
+        bot.send_message(chat_id, "Пользователь с таким ID не найден", reply_markup=main_menu_bt())
         return
     matching_db(user1_id=user1_id, user2_id=user2_id)
-    bot.send_message(chat_id, "Успешно добавлено")
+    bot.send_message(chat_id, "Успешно добавлено", reply_markup=main_menu_bt())
 
 
 bot.infinity_polling()

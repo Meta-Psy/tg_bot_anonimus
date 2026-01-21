@@ -38,7 +38,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}')\n        bot.register_next_step_handler(message, main_menu)\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")\n        bot.register_next_step_handler(message, save_name)\ndef save_name(message):",
+        "peekOfCode": "def welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}', reply_markup=main_menu_bt())\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")\n        bot.register_next_step_handler(message, save_name)\ndef save_name(message):\n    chat_id = message.from_user.id",
         "detail": "bot",
         "documentation": {}
     },
@@ -83,7 +83,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':\n        bot.send_message(chat_id, \"Ваш опросник успешно сохранен. Если будет желание, можете снова создать опросник или пройти его самому. Кнопки будут как всегда внизу.\", reply_markup=main_menu_bt())\n    elif message.text == 'Еще один опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message, answers)\ndef add_friend(message):\n    chat_id = message.from_user.id\n    friend_tg_id = int(message.text)",
+        "peekOfCode": "def choose(message):\n    chat_id = message.from_user.id\n    if message.text == 'Завершить работу':\n        bot.send_message(chat_id, \"Ваш опросник успешно сохранен. Если будет желание, можете снова создать опросник или пройти его самому. Кнопки будут как всегда внизу.\", reply_markup=main_menu_bt())\n    elif message.text == 'Еще один опросник':\n        bot.send_message(chat_id, 'Задайте Вопрос: ')\n        bot.register_next_step_handler(message, answers)\ndef add_friend(message):\n    chat_id = message.from_user.id\n    try:",
         "detail": "bot",
         "documentation": {}
     },
@@ -92,7 +92,7 @@
         "kind": 2,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "def add_friend(message):\n    chat_id = message.from_user.id\n    friend_tg_id = int(message.text)\n    user1_id = get_user_id(message.from_user.id)\n    user2_id = get_user_id(friend_tg_id)\n    if user2_id is None:\n        bot.send_message(chat_id, \"Пользователь с таким ID не найден\")\n        return\n    matching_db(user1_id=user1_id, user2_id=user2_id)\n    bot.send_message(chat_id, \"Успешно добавлено\")",
+        "peekOfCode": "def add_friend(message):\n    chat_id = message.from_user.id\n    try:\n        friend_tg_id = int(message.text)\n    except ValueError:\n        bot.send_message(chat_id, \"Некорректный ID. Введите число.\", reply_markup=main_menu_bt())\n        return\n    user1_id = get_user_id(message.from_user.id)\n    user2_id = get_user_id(friend_tg_id)\n    if user2_id is None:",
         "detail": "bot",
         "documentation": {}
     },
@@ -101,7 +101,7 @@
         "kind": 5,
         "importPath": "bot",
         "description": "bot",
-        "peekOfCode": "bot = telebot.TeleBot(token=\"8284829962:AAEGchYMnm23mP9Tpxgyo1rFVOyclJTOi5o\")\n@bot.message_handler(commands=['start'])\ndef welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}')\n        bot.register_next_step_handler(message, main_menu)\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")",
+        "peekOfCode": "bot = telebot.TeleBot(token=\"8284829962:AAEGchYMnm23mP9Tpxgyo1rFVOyclJTOi5o\")\n@bot.message_handler(commands=['start'])\ndef welcome(message):\n    chat_id = message.from_user.id\n    if check_reg(message.from_user.id):\n        name = check_reg(message.from_user.id)\n        bot.send_message(chat_id, f'Добро пожаловать, {name[0][2]}', reply_markup=main_menu_bt())\n    else:\n        bot.send_message(chat_id=message.from_user.id, text=\"Перед тем как начать,давайте познакомимся.Как вас зовут? \")\n        bot.register_next_step_handler(message, save_name)",
         "detail": "bot",
         "documentation": {}
     },
